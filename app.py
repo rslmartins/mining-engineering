@@ -1,22 +1,27 @@
+#Framework to operate on Web
 import streamlit as st
 
+#Ignore warnings
 import warnings
 warnings.filterwarnings("ignore")
 
+#Load Data
+from pre_processing import df, df_raw
 
-from pre_processing import df,df_raw
-
+#Basic Data Analysis Packages
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#from sklearn.preprocessing import StandardScaler
+#Package to perform PCA
 from sklearn.decomposition import PCA
 
+#Packages to manipulate and perform metrics
 from sklearn.model_selection import train_test_split
 from sklearn import model_selection
 
+#Packages for Classifiers
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -26,8 +31,6 @@ from sklearn.svm import SVC
 
 
 st.title("Data Science for Mining Engineering")
-
-
 df_target = df['target']
 df = df.drop(columns=['target'])
 df_raw = df_raw.drop(columns=['target'])
@@ -38,11 +41,13 @@ st.write(df_raw.head())
 st.write("Dataframe after pre-processing.")
 st.write(df.head())
 
+
 st.write("Dataframe's Features Correlation.")
 fig,ax = plt.subplots(figsize=(15,15))
 sns.heatmap(df.corr(),annot=True, linewidths=.5, fmt= '.1f',ax=ax)
 plt.show()
 st.pyplot(fig)
+
 
 st.write("Dataframe's Features Box-plot.")
 fig,ax = plt.subplots(figsize=(15,15))
@@ -51,6 +56,7 @@ sns.despine(offset=10, trim=True)
 plt.xticks(rotation=90, fontsize=16)
 plt.show()
 st.pyplot(fig)
+
 
 st.write("Dataframe's Features Box-plot After Normalization.")
 
@@ -68,10 +74,7 @@ pca = PCA()
 
 X_train_pca = pca.fit_transform(df.fillna(0))
 exp_var_pca = pca.explained_variance_ratio_
-# Cumulative sum of eigenvalues; This will be used to create step plot
-# for visualizing the variance explained by each principal component.
 cum_sum_eigenvalues = np.cumsum(exp_var_pca)
-# Create the visualization plot
 
 fig,ax = plt.subplots(figsize=(15,15))
 plt.bar(range(1,len(exp_var_pca)+1), exp_var_pca, alpha=0.5, align='center', label='Individual explained variance')
@@ -84,6 +87,7 @@ plt.show()
 st.pyplot(fig)
 plt.show()
 
+
 st.write("Dataframe's After PCA.")
 N=15
 columns_vector = ['element '+str(i) for i in range(1,N+1)]
@@ -92,6 +96,7 @@ df_PCA = pca.fit_transform(df.fillna(0))
 df_PCA = pd.DataFrame(data = df_PCA
              , columns = columns_vector)
 st.write(df_PCA)
+
 
 st.write("Performance of Classifiers Using k-Fold Cross-Validation.")
 X_train, X_test, y_train, y_test = train_test_split(df_PCA, df_target, test_size=1/3,stratify = df_target, random_state=42)
@@ -114,3 +119,4 @@ for name, model in models:
     names.append(name)
     msg = "%s: $\mu$:%f $\;$  $\sigma$:%f" % (name, cv_results.mean(), cv_results.std())
     st.success(msg)
+
