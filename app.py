@@ -109,35 +109,15 @@ params = {'n_estimators': 500,
           'learning_rate': 0.01,
           'loss': 'ls'}
 
-
 reg = GradientBoostingRegressor(**params)
 reg.fit(X_train, y_train)
 reg.predict(X_test[1:2])
-st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
-#mse = mean_squared_error(y_test, reg.predict(X_test))
-mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
 
-#st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
+mse = mean_squared_error(y_test, reg.predict(X_test))
+st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
+mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
 st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
 
-
-test_score = np.zeros((params['n_estimators'],), dtype=np.float64)
-for i, y_pred in enumerate(reg.staged_predict(X_test)):
-    test_score[i] = reg.loss_(y_test, y_pred)
-
-#fig = plt.figure(figsize=(6, 6))
-#plt.subplot(1, 1, 1)
-#plt.title('Deviance')
-#plt.plot(np.arange(params['n_estimators']) + 1, reg.train_score_, 'b-',
-#         label='Training Set Deviance')
-#plt.plot(np.arange(params['n_estimators']) + 1, test_score, 'r-',
-#         label='Test Set Deviance')
-#plt.legend(loc='upper right')
-#plt.xlabel('Boosting Iterations')
-#plt.ylabel('Deviance')
-#fig.tight_layout()
-#plt.show()
-#st.pyplot(fig)
 
 st.write("Support Vector Machine")
 params = {'C': 1.0,
@@ -147,7 +127,9 @@ params = {'C': 1.0,
 
 reg = SVR(**params)
 reg.fit(X_train, y_train)
-st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
+
+mse = mean_squared_error(y_test, reg.predict(X_test))
+st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
 mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
 st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
 
@@ -160,7 +142,8 @@ params = {'activation': 'relu',
 
 reg = MLPRegressor(**params)
 reg.fit(X_train, y_train)
-st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
+
+mse = mean_squared_error(y_test, reg.predict(X_test))
+st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
 mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
 st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
-
