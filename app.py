@@ -21,14 +21,16 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn import model_selection
 
-#Packages for Classifiers
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
+#Packages for Regressor
+#https://scikit-learn.org/stable/auto_examples/ensemble/plot_gradient_boosting_regression.html
+#https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html
+from sklearn.datasets import make_regression
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_percentage_error
 
+from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
 
 st.title("Data Science for Mining Engineering")
 df_target = df['target']
@@ -98,25 +100,67 @@ df_PCA = pd.DataFrame(data = df_PCA
 st.write(df_PCA)
 
 
-st.write("Performance of Classifiers Using k-Fold Cross-Validation.")
-X_train, X_test, y_train, y_test = train_test_split(df_PCA, df_target, test_size=1/3,stratify = df_target, random_state=42)
-seed=42
-models = []
-scoring='accuracy'
-models.append(('Logistic Regression', LogisticRegression()))
-models.append(('Linear Discriminant Analysis', LinearDiscriminantAnalysis()))
-models.append(('K-Nearest Neighbors Algorithm', KNeighborsClassifier()))
-models.append(('Decision Tree Classifier', DecisionTreeClassifier()))
-models.append(('Naive Bayes', GaussianNB()))
-models.append(('Support Vector Machine', SVC()))
+st.write("Performance of Gradient Boost Regressor")
+X_train, X_test, y_train, y_test = train_test_split(df_PCA, df_target,test_size=0.33, random_state=42)
 
-results = []
-names = []
-for name, model in models:
-    kfold = model_selection.KFold(n_splits=10, random_state=seed, shuffle = True)
-    cv_results = model_selection.cross_val_score(model, X_train, y_train, cv=kfold, scoring=scoring)
-    results.append(cv_results)
-    names.append(name)
-    msg = "%s: $\mu$:%f $\;$  $\sigma$:%f" % (name, cv_results.mean(), cv_results.std())
-    st.success(msg)
+params = {'n_estimators': 500,
+          'max_depth': 4,
+          'min_samples_split': 5,
+          'learning_rate': 0.01,
+          'loss': 'ls'}
+
+
+reg = GradientBoostingRegressor(**params)
+reg.fit(X_train, y_train)
+reg.predict(X_test[1:2])
+st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
+#mse = mean_squared_error(y_test, reg.predict(X_test))
+mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
+
+#st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
+st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
+
+
+test_score = np.zeros((params['n_estimators'],), dtype=np.float64)
+for i, y_pred in enumerate(reg.staged_predict(X_test)):
+    test_score[i] = reg.loss_(y_test, y_pred)
+
+#fig = plt.figure(figsize=(6, 6))
+#plt.subplot(1, 1, 1)
+#plt.title('Deviance')
+#plt.plot(np.arange(params['n_estimators']) + 1, reg.train_score_, 'b-',
+#         label='Training Set Deviance')
+#plt.plot(np.arange(params['n_estimators']) + 1, test_score, 'r-',
+#         label='Test Set Deviance')
+#plt.legend(loc='upper right')
+#plt.xlabel('Boosting Iterations')
+#plt.ylabel('Deviance')
+#fig.tight_layout()
+#plt.show()
+#st.pyplot(fig)
+
+st.write("Support Vector Machine")
+params = {'C': 1.0,
+          'degree': 9,
+          'kernel': 'rbf',
+          'epsilon': 0.2}       
+
+reg = SVR(**params)
+reg.fit(X_train, y_train)
+st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
+mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
+st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
+
+
+st.write("Multi-Layer Percepetron")
+params = {'activation': 'relu',
+          'max_iter': 500,
+          'alpha': 0.005,
+          'solver': 'adam'}    
+
+reg = MLPRegressor(**params)
+reg.fit(X_train, y_train)
+st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
+mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
+st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
 

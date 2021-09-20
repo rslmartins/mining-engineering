@@ -53,24 +53,13 @@ crystal_type
 """
 df['crystal_type'] = df['crystal_type'].dropna().apply(lambda x: int(x.replace('group ','')))
 
-"""
-Transform target data to perform classification
-
-target
-[1.044776119, 1.079136691, 1.096774194, 1.125827815, 1.137724551, 1.140939597, 1.156462585, 1.19047619, ..., 268.1879195, 268.7022901, 270.0, 270.8015267, 272.9007634, 275.0]
-"""
-df['target'] = df['target'].map(lambda x: 1 if x>= 0 and x <100 else x)
-df['target'] = df['target'].map(lambda x: 2 if x>= 100 and x < 200 else x)
-df['target'] = df['target'].map(lambda x: 3 if x>= 150 and x < 200 else x)
-df['target'] = df['target'].map(lambda x: 4 if x>= 200 and x < 250 else x)
-df['target'] = df['target'].map(lambda x: 5 if x>= 250 and x <= 275 else x)
-df['target'].unique()
 
 """
 Transform date into days counting until the present date
 """
 today = datetime.datetime.now().date()
 df['when'] = df['when'].dropna().apply(lambda x: (today-datetime.datetime.strptime(x,'%d/%m/%Y').date()).days )
+
 
 """
 This data is droped due its bad date appointing to 1969-12-31 21:00:44.021674, for example"
@@ -112,4 +101,3 @@ df = make_column(df,'predicted_process_end','process_end','diff_process_end')
 df = make_column(df,'start_critical_subprocess1','start_subprocess1','diff_subprocess1')
 df = make_column(df,'expected_start','start_process','diff_process')
 df = make_column(df,'reported_on_tower','subprocess1_end','diff_on_tower')
-
