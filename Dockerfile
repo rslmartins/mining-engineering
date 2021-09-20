@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 #Install the requirements for OS and Python
-RUN pip3 install ./requirements.txt
+RUN pip3 install -r ./requirements.txt
 
 #Set streamlit app as default
 CMD streamlit run --server.port $PORT app.py
