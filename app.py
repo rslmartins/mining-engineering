@@ -19,18 +19,13 @@ from sklearn.decomposition import PCA
 
 #Packages to manipulate and perform metrics
 from sklearn.model_selection import train_test_split
-from sklearn import model_selection
+from sklearn.model_selection import cross_val_score
 
-#Packages for Regressor
-#https://scikit-learn.org/stable/auto_examples/ensemble/plot_gradient_boosting_regression.html
-#https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html
-from sklearn.datasets import make_regression
+#Packages for Regressors
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import mean_absolute_percentage_error
-
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
+
 
 st.title("Data Science for Mining Engineering")
 df_target = df['target']
@@ -100,7 +95,7 @@ df_PCA = pd.DataFrame(data = df_PCA
 st.write(df_PCA)
 
 
-st.write("Performance of Gradient Boost Regressor")
+st.write("Gradient Boost Regressor")
 X_train, X_test, y_train, y_test = train_test_split(df_PCA, df_target,test_size=0.33, random_state=42)
 
 params = {'n_estimators': 500,
@@ -110,14 +105,9 @@ params = {'n_estimators': 500,
           'loss': 'ls'}
 
 reg = GradientBoostingRegressor(**params)
-reg.fit(X_train, y_train)
-reg.predict(X_test[1:2])
 
-mse = mean_squared_error(y_test, reg.predict(X_test))
-st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
-mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
-st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
-
+scores = cross_val_score(reg, df_PCA, df_target, cv=5)
+st.success("Cross-validation with %0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
 
 st.write("Support Vector Machine")
 params = {'C': 1.0,
@@ -126,12 +116,9 @@ params = {'C': 1.0,
           'epsilon': 0.2}       
 
 reg = SVR(**params)
-reg.fit(X_train, y_train)
 
-mse = mean_squared_error(y_test, reg.predict(X_test))
-st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
-mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
-st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
+scores = cross_val_score(reg, df_PCA, df_target, cv=5)
+st.success("Cross-validation with %0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
 
 
 st.write("Multi-Layer Percepetron")
@@ -141,9 +128,6 @@ params = {'activation': 'relu',
           'solver': 'adam'}    
 
 reg = MLPRegressor(**params)
-reg.fit(X_train, y_train)
 
-mse = mean_squared_error(y_test, reg.predict(X_test))
-st.success("The mean squared error (MSE) on test set: {:.4f}".format(mse))
-mape = mean_absolute_percentage_error(y_test, reg.predict(X_test))
-st.success("The mean absolute percentage error (MAPE) on test set: {:.4f} %".format(mape*100))
+scores = cross_val_score(reg, df_PCA, df_target, cv=5)
+st.success("Cross-validation with %0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
