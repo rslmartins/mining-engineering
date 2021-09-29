@@ -64,8 +64,8 @@ df['when'] = df['when'].dropna().apply(lambda x: (today-datetime.datetime.strpti
 """
 This data is droped due its bad date appointing to 1969-12-31 21:00:44.021674, for example"
 """
-df['opened'].dropna().apply(lambda x: datetime.datetime.fromtimestamp(float(x)/ 1e3) if '.' in x and type(x)==str else x )
-df = df.drop(columns=['opened'])
+df['opened'] = df['opened'].dropna().apply(lambda x: float("NaN") if '.' in str(x) else x )
+df['opened'] = df['opened'].dropna().apply(lambda x: (today-datetime.datetime.strptime(x,'%d/%m/%Y %H:%M').date()).days )
 
 """
 Transform two date columns into one using its seconds difference
