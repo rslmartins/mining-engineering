@@ -19,29 +19,13 @@ from sklearn.decomposition import PCA
 
 #Packages to manipulate and perform metrics
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 
 #Packages for Regressor
-import abc
+from utils import *
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
 
-def perform_regressor(reg: abc.ABCMeta, X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame):
-	reg.fit(X_train, y_train)
-	y_predicted = reg.predict(X_test)
-	rmse = mean_squared_error(y_test, y_predicted, squared = True)
-
-	pixel = 1/plt.rcParams['figure.dpi']
-	fig, ax = plt.subplots(figsize=(800*pixel, 600*pixel))
-	plt.scatter(range(len(y_test)),abs(y_test-y_predicted), label = 'Absolute error between target and predicted')
-	plt.legend(loc="best")
-	vals = ax.get_yticks()
-	st.pyplot(fig)
-	plt.show()
-
-	st.success('$R^2$ of Gradient Boosting Regressor: '+str(reg.score(X_test, y_test)))
-	st.success("The root mean squared error (RMSE) on test set: {:.4f}".format(rmse))
 
 # Remove target column from dataframe before pre-processing (df) and after pre-processing (df_raw)
 df_target = df['target']
@@ -145,7 +129,7 @@ params = {'n_estimators': 500,
           'min_samples_split': 5,
           'learning_rate': 0.01,
           'loss': 'ls'}
-perform_regressor(GradientBoostingRegressor(**params), X_train, y_train, X_test, y_test)
+function.perform_regressor(GradientBoostingRegressor(**params), X_train, y_train, X_test, y_test)
 
 
 st.write("Performance of Support Vector Machine")
@@ -153,7 +137,7 @@ params = {'C': 1.0,
           'degree': 9,
           'kernel': 'rbf',
           'epsilon': 0.2}       
-perform_regressor(SVR(**params), X_train, y_train, X_test, y_test)
+function.perform_regressor(SVR(**params), X_train, y_train, X_test, y_test)
 
 
 st.write("Performance of Multi-Layer Percepetron")
@@ -161,4 +145,4 @@ params = {'activation': 'relu',
           'max_iter': 500,
           'alpha': 0.005,
           'solver': 'adam'}   
-perform_regressor(MLPRegressor(**params), X_train, y_train, X_test, y_test)
+function.perform_regressor(MLPRegressor(**params), X_train, y_train, X_test, y_test)
