@@ -44,7 +44,7 @@ class function:
 
 		pixel = 1/plt.rcParams['figure.dpi']
 		fig, ax = plt.subplots(figsize=(800*pixel, 600*pixel))
-		plt.scatter(range(len(y_test)),abs(y_test-y_predicted), label = 'Absolute error between target and predicted')
+		plt.scatter(range(len(y_test)),abs(y_test-y_predicted), label = 'Absolute error between actual target and predicted target')
 		plt.legend(loc="best")
 		vals = ax.get_yticks()
 		st.pyplot(fig)
