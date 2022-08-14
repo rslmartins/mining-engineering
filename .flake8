@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 160
+exclude = venv/*
+max-complexity = 20
+ignore = E712, E226, F401, W293, E225, W503
+per-file-ignores =
+    azure_connection.py: C901

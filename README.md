@@ -1,6 +1,18 @@
 # Mining Engineering
 Machine Learning using data from mining industry
 
+# Linting
+
+```
+$ flake8 --config=".flake8"
+```
+
+# Unit-Testing
+
+```
+$ pytest test/unit -vv
+```
+
 # Dockerized
 
 1. Build Docker Image:
