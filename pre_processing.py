@@ -6,7 +6,7 @@ warnings.filterwarnings("ignore")
 
 
 class Preparing:
-    def data_prepared() -> None:
+    def data_prepared() -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
         """
         Create a new dataframe as df to manipulate, and keep a raw dataframe as df_raw
         """
